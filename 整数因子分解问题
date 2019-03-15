@@ -1,0 +1,13 @@
+def f(x):
+    global count
+    for i in range(2,x-1):
+        
+        if x%i==0:
+            count=count+1           
+            f(x//i)
+    return count
+a=input('请输入x值，求x的分解式数：')
+count=0
+x=int(a)
+y=f(x)
+print('x的分解式数数为：',y+1)
