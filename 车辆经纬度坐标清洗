@@ -1,0 +1,63 @@
+import os
+import pandas as pd
+import numpy as np
+import math
+import matplotlib.pyplot as plt
+import csv
+from folium import plugins
+import folium
+%matplotlib notebook
+shuju=r'E:\taidi\C\quanbu\cheliang\AA00004.csv'
+data=pd.read_csv(shuju,encoding='gbk')#导入数据
+data=data.drop_duplicates(subset=['lat','lng'])#将lat和lng一样的项去重（去掉速度为零时，经纬度很多一样）
+direction_angle=np.array(data['direction_angle'])#将direction_angle列转为一维数组
+data=np.array(data)#将整个数据转换为数组形式
+location=data[:,3:5]#取lat和lng的数据构成二维数组
+def f(x,y):#定义求lan均值的函数
+    y=(x+y)/2
+    c=np.abs(y-x)
+    if c>m:
+        f(x,y)
+    else:
+        lat[i+1]=y
+def g(x,y):定义求lat均值的函数
+    y=(x+y)/2
+    d=np.abs(y-x)
+    if d>m:
+        g(x,y)
+    else:
+        lng[i+1]=y
+n=0.0005#定义经度变化阈值
+m=0.0007#定义维度变化阈值
+lng=location[:,:1]#取经度
+lat=location[:,1:]#取维度
+for i in range(len(lng)-1):
+    a=np.abs(lng[i+1]-lng[i])#经度差值
+    b=np.abs(lat[i+1]-lat[i])#维度差值
+    if a<n and b>m:#判断lat变化判断是否超过阈值，如果超过掉用lat均值函数
+        f(lat[i],lat[i+1])
+    if b<m and a>n:#判断lng变化判断是否超过阈值，如果超过掉用lng均值函数
+        g(lng[i],lng[i+1])
+    if b>m and a>n:#判断lng和lat是否同时超过阈值，如果超过，同时调用lng和lat函数
+        f(lat[i],lat[i+1])
+        g(lng[i],lng[i+1])
+#结束用均值的数据处理
+#开始用模型处理数据
+print('处理前:',lng[1],lat[1])
+print('处理前:',lng[2],lat[2])
+print('处理前:',lng[3],lat[3])
+for i in range(len(lng)-1):
+    a=np.abs(lng[i+1]-lng[i])#经度差值
+    b=np.abs(lat[i+1]-lat[i])#维度差值
+    if a<n and b>m:#判断lat是否超过阈值，如果超过将原来的点用模型推测出的替换
+        lat[i]=lat[i]+((gps_speed[i+1]+gps_speed[i])*math.sin(direction_angle[i]))/(111000*3.6*2*math.cos(direction_angle[i+1]-direction_angle[i]))
+    if b<m and a>n:#判断lng是否超过阈值，如果超过将原来的点用模型推测出的替换
+        lng[i]=lng[i]+((gps_speed[i+1]+gps_speed[i])*math.cos(direction_angle[i]))/(111000*3.6*2)
+    if b>m and a>n:#判断lat和lng是否超过阈值，如果超过将原来的点用模型推测出的替换
+        lng[i]=lng[i]+((gps_speed[i+1]+gps_speed[i])*math.cos(direction_angle[i]))/(111000*3.6*2)
+        lat[i]=lat[i]+((gps_speed[i+1]+gps_speed[i])*math.sin(direction_angle[i]))/(111000*3.6*2*math.cos(direction_angle[i+1]-direction_angle[i]))
+plt.scatter(lng,lat,0.1)#用散点图可视化
+print('*'*20)
+print('处理后:',lng[1],lat[1])
+print('处理后:',lng[2],lat[2])
+print('处理后:',lng[3],lat[3])
