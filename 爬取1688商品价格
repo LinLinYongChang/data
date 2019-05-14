@@ -1,0 +1,22 @@
+# data
+import requests
+import re
+def get_one_page(url):
+    headers={
+        'User-Agent':'Mozilla/5.0(Macintosh;Intel Mac OS X 10_13_3) AppleWebKit/537.36(KHTML,like Gecko) Chrome/65.0.3325.162 Safari/537.36'
+    }#模拟登陆，防止1688禁止获取
+    response = requests.get(url,headers=headers)#请求URL，成功后返回200
+    if response.status_code==200:
+        return response.text#访问成功返回源代码
+    return None
+def main():
+    goods=input('请输入产品名称：')
+    url = "https://s.1688.com/selloffer/offer_search.htm?keywords=%CA%E9%B0%FC&button_click=top&earseDirect=false&n=y&netType=1%2C11&sug=1_0"#仅限1688内网址
+    html=get_one_page(url)#调取get_one_page方法得到源代码
+    goodlist=[]#空的列表
+    plist = re.findall(r'\"sm-offer-priceNum sw-dpl-offer-priceNum.*?\"\>[\d]*',html)#正则匹配商品价格
+    for i in range(len(plist)):#循环列表
+        price = re.findall(r'\d+\.?\d*',plist[i])#列表内的每个元素取数字即价格
+        goodlist.append(price)#向列表goodlist添加元素
+    print(goodlist)
+main()#主函数，执行的开始
