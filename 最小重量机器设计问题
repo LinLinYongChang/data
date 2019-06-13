@@ -1,0 +1,28 @@
+# data
+import pandas as pd
+import numpy as np
+n,m,d=map(int, input("请输入n，m，d的值：").split())
+c=[]
+w=[]
+for i in range(n):
+    c.append(list(map(int, input().split())))
+for i in range(n):
+    w.append(list(map(int, input().split())))
+cw=cp=sumx=0
+for i in range(n):
+    sumx=sumx+c[i][0]
+def f(i):
+    global cw,cp,sumx
+    if i>n-1:
+        if cw<sumx:
+            sumx=cw
+            return sumx
+    for j in range(m):
+        cw=cw+w[i][j]
+        cp=cp+c[i][j]
+        if cw <sumx and cp<=d:
+            f(i+1)
+        cw=cw-w[i][j]
+        cp=cp-c[i][j]
+f(0)
+print("最小重量为：",sumx)
