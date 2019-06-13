@@ -1,0 +1,22 @@
+# data
+import pandas as pd
+import numpy as np
+n,c=map(int, input("请输入n，c的值：").split())
+x=list(map(int, input().split()))
+x=pd.Series(x)
+x=x.sort_values(ascending=False)
+x=np.array(x)
+summ=w_1=0
+for i in range(n):
+    zhishuji(i)
+    w_1=0
+print("最大装载重量为：",summ)
+def zhishuji(i):
+    global w_1,summ
+    if w_1>summ:
+        summ=w_1
+    for j in range(i,n):
+        w_1=w_1+x[j]
+        if w_1<=c:
+            zhishuji(i+1)
+        w_1=w_1-x[j]
