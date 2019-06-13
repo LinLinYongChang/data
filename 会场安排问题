@@ -1,0 +1,36 @@
+# data
+import pandas as pd
+import numpy as np
+def ff_inde(s,f):
+    global sum1
+    n=[]
+    ss=pd.Series(s) #将起始时间赋值给序列
+    ff=pd.Series(f)#将结束时间赋值给序列
+    ff=ff.sort_values()#按照结束时间进行排序
+    index=ff.index#拿到结束时间排序后的索引位置
+    ss=ss.reindex(index)#根据结束时间排序后的索引位置排序开始时间，让他们一一对应
+    s=np.array(ss)
+    f=np.array(ff)
+    p=f[0]#第一个结束时间
+    s= np.delete(s,[0])
+    f= np.delete(f,[0])
+    for i in range(0,len(f)):
+        if s[i]>p:
+            p=f[i]
+            n.append(i)
+    s= np.delete(s,n)
+    f= np.delete(f,n)
+    sum1+=1
+    if s.sum()>0:
+        ff_inde(s,f)
+k=int(input("请输入k值"))
+s=[]#定义开始时间存放列表
+f=[]#定义结束时间存放列表
+sum1=0#初始化最小会场数
+#初始化
+for i in range(k):
+    a,b = map(int, input().split())
+    s.append(a)
+    f.append(b)
+ff_inde(s,f)
+print("最小会场数为：",sum1)
