@@ -1,0 +1,47 @@
+import pandas as pd
+import numpy as np
+n,m=map(int, input("请输入变量数n和约束数m：").split())
+a=list(map(float, input("输入n个物品价值：").split()))
+x_data=[]
+for i in range(m):
+    i=int(i)
+    print("输入第 %d 个属性："%(i+1),end='')
+    t=list(map(int, input().split()))
+    x_data.append(t)
+data = pd.DataFrame(x_data)
+y=list(map(int, input("输入m个属性的约束条件：").split()))
+data['约束条件']=y
+def subsets(self1,c, nums): 
+    res = [[]]
+    for i in nums:
+        cr = []
+        for j in res:
+            p=[]
+            p=j+[i]
+            if c[p].sum()<self1:
+                cr.append(p)
+        res += cr
+    return res
+def intersection( nums1, nums2):
+    s = []
+    for i in nums1:
+        if i not in s and  i in nums2 :
+            s.append(i)
+    return s
+data_1=data.drop(['约束条件'],axis=1)
+data_array=np.array(data_1)
+x=range(n)
+c=pd.Series(data_array[0])
+h=subsets(y[0],c,x)
+c=None
+for i in range(1,m):
+    c=pd.Series(data_array[i])
+    g=subsets(y[i],c,x)
+    c=None
+    h=intersection(h,g)
+a=pd.Series(a)
+u=[]
+for k in h:
+    u.append(a[k].sum())
+u=np.array(u,dtype=float)
+print("最大价值为%f元"%(np.max(u)))
